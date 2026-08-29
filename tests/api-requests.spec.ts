@@ -1,54 +1,60 @@
 import { test, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 
-test('get users from API endpoint', async ({ request }) => {
+test.describe('Testing users API from reqres free endpoints', () => {
 
-  const response = await request.get('https://reqres.in/api/users?page=2');
-  const responseObject = await response.json()
+  test('get users from API endpoint', async ({ request }) => {
 
-  //Show the JSON of the whole response in the console for debugging purposes
-  console.log(responseObject);
+    const response = await request.get('/api/users?page=2');
+    const responseObject = await response.json()
 
+    //Uncomment to show the JSON of the whole response in the console for debugging purposes
+    //console.log(responseObject);
+
+    
+    //Test if response is valid
+    expect(response.status()).toBe(200);
+
+    //Test if we are on page 2 from the request
+    expect(responseObject.page).toBe(2);
+
+    //Test if the number of users returned is 6 and the first user has id 7 and email '
+    expect(responseObject.data.length).toBe(6);
+    expect(responseObject.data[0].id).toBe(7);
+
+    //Test if e-mail is INCORRECT
+    expect(responseObject.data[0].email).not.toBe('michael.holt@reqres.in');
+
+    //Test if e-mail is CORRECT
+    expect(responseObject.data[0].email).toBe('michael.lawson@reqres.in');
+
+    //Uncomment Fail test to test GITHUB reporter
+    //expect(responseObject.data[0].email).toBe('michael.holt@reqres.in');
+
+  });
+
+  test('post users from API endpoint', async ({ request }) => {
+
+    const mockName = faker.person.fullName();
+
+    const response = await request.post('/api/users?page=2', {
   
-  //Test if response is valid
-  expect(response.status()).toBe(200);
+      data: {
+          name: mockName,
+        },
+      }
+    );
+  
+    const responseObject = await response.json()
 
-  //Test if we are on page 2 from the request
-  expect(responseObject.page).toBe(2);
+    //Uncomment to show the JSON of the whole response in the console for debugging purposes
+    //console.log(responseObject);
 
-  //Test if the number of users returned is 6 and the first user has id 7 and email '
-  expect(responseObject.data.length).toBe(6);
-  expect(responseObject.data[0].id).toBe(7);
+    //Test if response is valid
+    expect(response.status()).toBe(201);
 
-  //Test if e-mail is INCORRECT
-  expect(responseObject.data[0].email).not.toBe('michael.holt@reqres.in');
+    //Test if the name is correct
+    expect(responseObject.name).toBe(mockName);
 
-  //Test if e-mail is CORRECT
-  expect(responseObject.data[0].email).toBe('michael.lawson@reqres.in');
-
-  //Fail test to test GITHUB reporter
-  expect(responseObject.data[0].email).toBe('michael.holt@reqres.in');
-
-});
-
-test('post users from API endpoint', async ({ request }) => {
-
-  const response = await request.post('https://reqres.in/api/users?page=2', {
- 
-     data: {
-        name: 'Test Name',
-      },
-    }
-  );
- 
-  const responseObject = await response.json()
-
-  //Show the JSON of the whole response in the console for debugging purposes
-  console.log(responseObject);
-
-  //Test if response is valid
-  expect(response.status()).toBe(201);
-
-  //Test if the name is correct
-  expect(responseObject.name).toBe('Test Name');
-
+  })
 });

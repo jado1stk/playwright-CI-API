@@ -25,6 +25,9 @@ test('get users from API endpoint', async ({ request }) => {
   //Test if e-mail is CORRECT
   expect(responseObject.data[0].email).toBe('michael.lawson@reqres.in');
 
+  //Fail test to test GITHUB reporter
+  expect(responseObject.data[0].email).toBe('michael.holt@reqres.in');
+
 });
 
 test('post users from API endpoint', async ({ request }) => {

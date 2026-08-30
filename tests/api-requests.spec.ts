@@ -31,16 +31,21 @@ test.describe('Testing users API from reqres free endpoints', () => {
     //Uncomment Fail test to test GITHUB reporter
     //expect(responseObject.data[0].email).toBe('michael.holt@reqres.in');
 
-  });
+  })
 
-  test('post users from API endpoint', async ({ request }) => {
+  test('post users from API endpoint on DUMMYJSON (free)', async ({ request }) => {
 
     const mockName = faker.person.fullName();
+    const mockJob = faker.person.jobTitle();
 
-    const response = await request.post('/api/users?page=2', {
-  
+    const response = await request.post('https://dummyjson.com/users/add', {
+      
+      headers:{
+        'Content-Type': 'application/json',
+      },
       data: {
-          name: mockName,
+          "firstName": mockName,
+          "jobTitle": mockJob,
         },
       }
     );
@@ -48,13 +53,13 @@ test.describe('Testing users API from reqres free endpoints', () => {
     const responseObject = await response.json()
 
     //Uncomment to show the JSON of the whole response in the console for debugging purposes
-    //console.log(responseObject);
+    console.log(responseObject);
 
     //Test if response is valid
     expect(response.status()).toBe(201);
 
-    //Test if the name is correct
-    expect(responseObject.name).toBe(mockName);
+    //Test to see if the name and mocked name are correct
+    expect(responseObject.firstName).toBe(mockName);
 
   })
 });
